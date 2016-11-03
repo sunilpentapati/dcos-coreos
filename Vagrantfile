@@ -7,7 +7,7 @@ Vagrant.require_version ">= 1.6.0"
 
 CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "user-data")
 CONFIG = File.join(File.dirname(__FILE__), "config.rb")
-DCOS_INSTALL_SCRIPT = File.join(File.dirname(__FILE__), "install-dcos-1_8.sh")
+DCOS_INSTALL_SCRIPT = File.join(File.dirname(__FILE__), "setup-dcos-1.8.sh")
 DCOS_CONFIG_PATH = File.join(File.dirname(__FILE__), "config.yaml")
 DCOS_IP_DETECT = File.join(File.dirname(__FILE__), "ip-detect")
 
@@ -134,15 +134,15 @@ Vagrant.configure("2") do |config|
 
       # Create the folder /opt/mesos-install
       config.vm.provision :shell, :inline => "mkdir -p /opt/mesos-install", :privileged => true
-      config.vm.provision :file, :source => "#{DCOS_INSTALL_SCRIPT}", :destination => "/tmp/install-dcos-1_8.sh"
+      config.vm.provision :file, :source => "#{DCOS_INSTALL_SCRIPT}", :destination => "/tmp/setup-dcos-1.8.sh"
       config.vm.provision :file, :source => "#{DCOS_CONFIG_PATH}", :destination => "/tmp/config.yaml"
       config.vm.provision :file, :source => "#{DCOS_IP_DETECT}", :destination => "/tmp/ip-detect"
-      config.vm.provision :shell, :inline => "mv /tmp/install-dcos-1_8.sh /opt/mesos-install/", :privileged => true
+      config.vm.provision :shell, :inline => "mv /tmp/setup-dcos-1.8.sh /opt/mesos-install/", :privileged => true
       config.vm.provision :shell, :inline => "mv /tmp/config.yaml /opt/mesos-install/", :privileged => true
       config.vm.provision :shell, :inline => "mv /tmp/ip-detect /opt/mesos-install/", :privileged => true
     
       # Download and prepare the package
-      config.vm.provision :shell, :inline => "bash /opt/mesos-install/install-dcos-1_8.sh prepare", :privileged => true
+      config.vm.provision :shell, :inline => "bash /opt/mesos-install/setup-dcos-1.8.sh prepare", :privileged => true
 
     end
   end
