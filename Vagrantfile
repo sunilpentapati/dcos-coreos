@@ -13,7 +13,6 @@ DCOS_IP_DETECT = File.join(File.dirname(__FILE__), "ip-detect")
 
 # Defaults for config options defined in CONFIG
 $num_instances = 2
-$num_bootstrap = 1
 $num_master = 1
 $num_agent = 1
 $instance_name_prefix = "agent"
