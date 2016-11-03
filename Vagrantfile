@@ -16,7 +16,7 @@ $num_instances = 2
 $num_bootstrap = 1
 $num_master = 1
 $num_agent = 1
-$instance_name_prefix = "mesos-agent"
+$instance_name_prefix = "agent"
 $update_channel = "stable"
 $image_version = "current"
 $enable_serial_logging = false
@@ -149,7 +149,7 @@ Vagrant.configure("2") do |config|
 
   # Install DC/OS Master node
   (1..$num_master).each do |i|
-    config.vm.define vm_name = "mesos-master"  do |config|
+    config.vm.define vm_name = "master"  do |config|
       config.vm.hostname = vm_name
 
       if $enable_serial_logging
