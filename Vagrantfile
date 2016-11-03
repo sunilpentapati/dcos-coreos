@@ -27,6 +27,7 @@ $vm_cpus = 1
 $vb_cpuexecutioncap = 100
 $shared_folders = {}
 $forwarded_ports = {}
+$dcos_version = "1.8"
 
 # Attempt to apply the deprecated environment variable NUM_INSTANCES to
 # $num_instances while allowing config.rb to override it
