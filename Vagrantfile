@@ -83,7 +83,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Install DC/OS bootstrap server
-  config.vm.define vm_name = "bootstrap"  do |config|
+  (1..$num_instances).each do |i|
+      config.vm.define vm_name = "bootstrap"  do |config|
       config.vm.hostname = vm_name
 
       if $enable_serial_logging
@@ -144,6 +145,7 @@ Vagrant.configure("2") do |config|
       # Download and prepare the package
       config.vm.provision :shell, :inline => "bash /opt/mesos-install/setup-dcos-1.8.sh prepare", :privileged => true
     end
+   end
 
   # Install DC/OS Master node
   (1..$num_master).each do |i|
@@ -178,7 +180,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpuexecutioncap", "#{$vb_cpuexecutioncap}"]
       end
 
-      ip = "172.17.8.101"
+      ip = "172.17.8.#{i+101}"
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
@@ -232,12 +234,12 @@ Vagrant.configure("2") do |config|
       
       config.vm.provider :virtualbox do |vb|
         vb.gui = vm_gui
-        vb.memory = vm_memory
+        vb.memory = $vm_memory_agent
         vb.cpus = vm_cpus
         vb.customize ["modifyvm", :id, "--cpuexecutioncap", "#{$vb_cpuexecutioncap}"]
       end
 
-      ip = "172.17.8.#{i+101}"
+      ip = "172.17.8.#{i+200}"
       config.vm.network :private_network, ip: ip
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
