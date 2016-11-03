@@ -141,9 +141,6 @@ Vagrant.configure("2") do |config|
       config.vm.provision :shell, :inline => "mv /tmp/config.yaml /opt/mesos-install/", :privileged => true
       config.vm.provision :shell, :inline => "mv /tmp/ip-detect /opt/mesos-install/", :privileged => true
     
-      # Pull the docker image nginx
-      config.vm.provision "docker", images: ["nginx"]
-      
       # Download and prepare the package
       config.vm.provision :shell, :inline => "bash /opt/mesos-install/install-dcos-1_8.sh prepare", :privileged => true
 
@@ -200,6 +197,12 @@ Vagrant.configure("2") do |config|
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
         config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
       end
+
+      # Download the dcos_install.sh file
+      config.vm.provision :shell, :inline => "wget http://172.17.8.100/dcos_install.sh"
+     
+      # Setup master on the node
+      config.vm.provision :shell, :inline => "bash dcos_install.sh master", :privileged => true
     end
   end
 
@@ -270,6 +273,12 @@ Vagrant.configure("2") do |config|
         config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
         config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
       end
+
+      # Download the dcos_install.sh file
+      config.vm.provision :shell, :inline => "wget -O /tmp/dcos_install.sh http://172.17.8.100/dcos_install.sh"
+     
+      # Setup master on the node
+      config.vm.provision :shell, :inline => "bash /tmp/dcos_install.sh slave", :privileged => true
 
     end
   end
