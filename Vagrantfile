@@ -22,6 +22,7 @@ $enable_serial_logging = false
 $share_home = false
 $vm_gui = false
 $vm_memory = 2048
+$vm_memory_agent = 4096
 $vm_cpus = 1
 $vb_cpuexecutioncap = 100
 $shared_folders = {}
@@ -183,7 +184,7 @@ Vagrant.configure("2") do |config|
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
       $shared_folders.each_with_index do |(host_folder, guest_folder), index|
-        config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "mesos-master" % index, nfs: true, mount_options: ['nolock,vers=3,udp']
+        config.vm.synced_folder host_folder.to_s, guest_folder.to_s, id: "master" % index, nfs: true, mount_options: ['nolock,vers=3,udp']
       end
 
       if $share_home
@@ -196,10 +197,10 @@ Vagrant.configure("2") do |config|
       end
 
       # Download the dcos_install.sh file
-      config.vm.provision :shell, :inline => "wget http://172.17.8.100/dcos_install.sh"
+      config.vm.provision :shell, :inline => "wget -O /tmp/dcos_install.sh http://172.17.8.100/dcos_install.sh"
      
       # Setup master on the node
-      config.vm.provision :shell, :inline => "bash dcos_install.sh master", :privileged => true
+      config.vm.provision :shell, :inline => "bash /tmp/dcos_install.sh master", :privileged => true
     end
   end
 
@@ -214,16 +215,7 @@ Vagrant.configure("2") do |config|
 
         serialFile = File.join(logdir, "%s-serial.txt" % vm_name)
         FileUtils.touch(serialFile)
-
-        ["vmware_fusion", "vmware_workstation"].each do |vmware|
-          config.vm.provider vmware do |v, override|
-            v.vmx["serial0.present"] = "TRUE"
-            v.vmx["serial0.fileType"] = "file"
-            v.vmx["serial0.fileName"] = serialFile
-            v.vmx["serial0.tryNoRxLoss"] = "FALSE"
-          end
-        end
-
+        
         config.vm.provider :virtualbox do |vb, override|
           vb.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
           vb.customize ["modifyvm", :id, "--uartmode1", serialFile]
@@ -237,15 +229,7 @@ Vagrant.configure("2") do |config|
       $forwarded_ports.each do |guest, host|
         config.vm.network "forwarded_port", guest: guest, host: host, auto_correct: true
       end
-
-      ["vmware_fusion", "vmware_workstation"].each do |vmware|
-        config.vm.provider vmware do |v|
-          v.gui = vm_gui
-          v.vmx['memsize'] = vm_memory
-          v.vmx['numvcpus'] = vm_cpus
-        end
-      end
-
+      
       config.vm.provider :virtualbox do |vb|
         vb.gui = vm_gui
         vb.memory = vm_memory
