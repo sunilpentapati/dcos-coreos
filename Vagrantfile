@@ -83,8 +83,7 @@ Vagrant.configure("2") do |config|
   end
 
   # Install DC/OS bootstrap server
-  (1..$num_bootstrap).each do |i|
-    config.vm.define vm_name = "bootstrap"  do |config|
+  config.vm.define vm_name = "bootstrap"  do |config|
       config.vm.hostname = vm_name
 
       if $enable_serial_logging
@@ -144,9 +143,7 @@ Vagrant.configure("2") do |config|
     
       # Download and prepare the package
       config.vm.provision :shell, :inline => "bash /opt/mesos-install/setup-dcos-1.8.sh prepare", :privileged => true
-
     end
-  end
 
   # Install DC/OS Master node
   (1..$num_master).each do |i|
