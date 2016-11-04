@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset
+PATH=$PATH:/usr/sbin:/sbin
+source /etc/environment
+echo $COREOS_PRIVATE_IPV4
